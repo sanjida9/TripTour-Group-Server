@@ -77,6 +77,26 @@ async function run() {
       }
     });
 
+    //CHART DATA
+
+    app.get("/hotel", async (req, res) => {
+      const hotelChart = await hotelsCollection.find({}).toArray();
+
+      res.send(hotelChart);
+    });
+
+    app.get("/package", async (req, res) => {
+      const packageChart = await watchesCollection.find({}).toArray();
+
+      res.send(packageChart);
+    });
+
+    app.get("/order", async (req, res) => {
+      const orderChart = await orderCollection.find({}).toArray();
+
+      res.send(orderChart);
+    });
+
     app.post("/contactus", async (req, res) => {
       console.log(req.body);
       const result = await contactusCollection.insertOne(req.body);
@@ -157,6 +177,13 @@ async function run() {
       res.json("Deleted!");
     });
 
+    // flight manage
+    app.get("/manageflights", async (req, res) => {
+      const allFlightOrders = await flightCollection.find({}).toArray();
+
+      res.send(allFlightOrders);
+    });
+
     //bus ticket manage
 
     app.get("/manageBus", async (req, res) => {
@@ -165,12 +192,15 @@ async function run() {
       res.send(allBusOrders);
     });
 
-    // flight manage
-    app.get("/flight", async (req, res) => {
-      const allFlightOrders = await flightCollection.find({}).toArray();
+    //car ticket manage
 
-      res.send(allFlightOrders);
+    app.get("/manageCar", async (req, res) => {
+      const allCarOrders = await busCollection.find({}).toArray();
+
+      res.send(allCarOrders);
     });
+
+    //flight delete
 
     app.post("/deleteFlightOrder", async (req, res) => {
       const userID = await req.body.UserId;
@@ -178,12 +208,56 @@ async function run() {
 
       res.json("Deleted!");
     });
+
+    //bus delete
+
+    app.post("/deleteBusOrder", async (req, res) => {
+      const userID = await req.body.UserId;
+      await busCollection.deleteOne({ _id: ObjectId(userID) });
+
+      res.json("Deleted!");
+    });
+
+    //car delete
+
+    app.post("/deleteCarOrder", async (req, res) => {
+      const userID = await req.body.UserId;
+      await carCollection.deleteOne({ _id: ObjectId(userID) });
+
+      res.json("Deleted!");
+    });
+
+    //flight  update
+
     app.post("/updateFlightStatus", async (req, res) => {
       const status = await req.body.status;
       const id = await req.body.id;
 
       const filter = { _id: ObjectId(id) };
       await flightCollection.updateOne(filter, { $set: { status: status } });
+
+      res.json("updated");
+    });
+
+    //bus update
+
+    app.post("/updateBusStatus", async (req, res) => {
+      const status = await req.body.status;
+      const id = await req.body.id;
+
+      const filter = { _id: ObjectId(id) };
+      await busCollection.updateOne(filter, { $set: { status: status } });
+
+      res.json("updated");
+    });
+
+    //car update
+    app.post("/updateCarStatus", async (req, res) => {
+      const status = await req.body.status;
+      const id = await req.body.id;
+
+      const filter = { _id: ObjectId(id) };
+      await carCollection.updateOne(filter, { $set: { status: status } });
 
       res.json("updated");
     });
